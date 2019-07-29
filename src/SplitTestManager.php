@@ -6,8 +6,6 @@ namespace MobilitySoft\SplitTesting;
 
 class SplitTestManager
 {
-    const COOKIE_PREFIX = 'split_test_';
-
     /**
      * @var array
      */
@@ -16,11 +14,17 @@ class SplitTestManager
     /**
      * @var string
      */
+    private $cookiePrefix;
+
+    /**
+     * @var string
+     */
     private $requestParamPrefix;
 
-    public function __construct(?string $requestParamPrefix = '')
+    public function __construct(?string $requestParamPrefix = 'st_', ?string $cookiePrefix = 'st_')
     {
         $this->requestParamPrefix = $requestParamPrefix;
+        $this->cookiePrefix       = $cookiePrefix;
     }
 
     /**
@@ -56,8 +60,8 @@ class SplitTestManager
     {
         if (isset($_GET[$this->requestParamPrefix . $testId])) {
             return htmlspecialchars($_GET[$this->requestParamPrefix . $testId]);
-        } elseif (isset($_COOKIE[self::COOKIE_PREFIX . $testId])) {
-            return htmlspecialchars($_COOKIE[self::COOKIE_PREFIX . $testId]);
+        } elseif (isset($_COOKIE[$this->cookiePrefix . $testId])) {
+            return htmlspecialchars($_COOKIE[$this->cookiePrefix . $testId]);
         } else {
             return 1;
         }
@@ -70,7 +74,7 @@ class SplitTestManager
     private function persistChoice($testId, $variationId): void
     {
         setcookie(
-            self::COOKIE_PREFIX . $testId,
+            $this->cookiePrefix . $testId,
             (string)$variationId,
             time() + 60 * 60 * 24 * 365
         );
