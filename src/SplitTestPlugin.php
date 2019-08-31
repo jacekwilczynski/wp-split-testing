@@ -25,6 +25,14 @@ class SplitTestPlugin
                 return $atts['variation'] == $activeVariationId ? $content : '';
             }
 
+            if (isset($atts['variations'])) {
+                $variations = explode(',', $atts['variations']);
+
+                return in_array($activeVariationId, $variations)
+                    ? $content
+                    : '';
+            }
+
             return $atts[$activeVariationId] ?? '';
         });
     }
