@@ -43,12 +43,21 @@ class SplitTestManager
 
     /**
      * @param int|string $testId
+     * @param int|string $variationId
+     */
+    public function setVariationId($testId, $variationId): void
+    {
+        $this->persistChoice($testId, $variationId);
+        $this->choices[$testId] = $variationId;
+    }
+
+    /**
+     * @param int|string $testId
      */
     private function initializeTest($testId): void
     {
-        $variationId = $this->chooseVariationId($testId);
-        $this->persistChoice($testId, $variationId);
-        $this->choices[$testId] = $variationId;
+        $variationId = $this->obtainVariationId($testId);
+        $this->setVariationId($testId, $variationId);
     }
 
     /**
@@ -56,15 +65,17 @@ class SplitTestManager
      *
      * @return int|string
      */
-    private function chooseVariationId($testId)
+    private function obtainVariationId($testId)
     {
         if (isset($_GET[$this->requestParamPrefix . $testId])) {
             return htmlspecialchars($_GET[$this->requestParamPrefix . $testId]);
-        } elseif (isset($_COOKIE[$this->cookiePrefix . $testId])) {
-            return htmlspecialchars($_COOKIE[$this->cookiePrefix . $testId]);
-        } else {
-            return 1;
         }
+
+        if (isset($_COOKIE[$this->cookiePrefix . $testId])) {
+            return htmlspecialchars($_COOKIE[$this->cookiePrefix . $testId]);
+        }
+
+        return 1;
     }
 
     /**
@@ -75,7 +86,7 @@ class SplitTestManager
     {
         setcookie(
             $this->cookiePrefix . $testId,
-            (string)$variationId,
+            (string) $variationId,
             time() + 60 * 60 * 24 * 365
         );
     }
