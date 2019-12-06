@@ -19,21 +19,26 @@ class SplitTestPlugin
     public function run(): void
     {
         add_shortcode('split_test', function (array $atts, ?string $content = '') {
-            $activeVariationId = $this->splitTestManager->getVariationId($atts['id'] ?? $atts['key']);
-
-            if (isset($atts['variation'])) {
-                return $atts['variation'] == $activeVariationId ? $content : '';
-            }
-
-            if (isset($atts['variations'])) {
-                $variations = explode(',', $atts['variations']);
-
-                return in_array($activeVariationId, $variations)
-                    ? $content
-                    : '';
-            }
-
-            return $atts[$activeVariationId] ?? '';
+            return do_shortcode($this->getContent($atts, $content));
         });
+    }
+
+    private function getContent(array $atts, ?string $content): string
+    {
+        $activeVariationId = $this->splitTestManager->getVariationId($atts['id'] ?? $atts['key']);
+
+        if (isset($atts['variation'])) {
+            return $atts['variation'] == $activeVariationId ? $content : '';
+        }
+
+        if (isset($atts['variations'])) {
+            $variations = explode(',', $atts['variations']);
+
+            return in_array($activeVariationId, $variations)
+                ? $content
+                : '';
+        }
+
+        return $atts[$activeVariationId] ?? '';
     }
 }

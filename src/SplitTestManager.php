@@ -24,7 +24,7 @@ class SplitTestManager
     public function __construct(?string $requestParamPrefix = 'st_', ?string $cookiePrefix = 'st_')
     {
         $this->requestParamPrefix = $requestParamPrefix;
-        $this->cookiePrefix       = $cookiePrefix;
+        $this->cookiePrefix = $cookiePrefix;
     }
 
     /**
@@ -34,7 +34,7 @@ class SplitTestManager
      */
     public function getVariationId($testId)
     {
-        if ( ! array_key_exists($testId, $this->choices)) {
+        if (!array_key_exists($testId, $this->choices)) {
             $this->initializeTest($testId);
         }
 
