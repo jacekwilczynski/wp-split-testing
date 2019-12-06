@@ -53,6 +53,15 @@ class SplitTestManager
 
     /**
      * @param int|string $testId
+     * @param int|string $variationId
+     */
+    public function setVariationIdOnce($testId, $variationId): void
+    {
+        $this->choices[$testId] = $variationId;
+    }
+
+    /**
+     * @param int|string $testId
      */
     private function initializeTest($testId): void
     {
